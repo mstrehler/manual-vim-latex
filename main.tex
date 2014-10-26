@@ -1,0 +1,355 @@
+% Datei: Documents/latex/vimlatex/main.tex
+% Begonnen: 20.07.2014 
+% Letzte Änderung: 03.08.2014 
+%
+% Anleitung für Latex-Suite
+
+\documentclass[a4paper,parskip=half,draft=true,DIV=15]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{listings}
+
+% Die Option dvipdfmx und das Paket bmpsize verhindern die Fehlermeldung von
+% latex: "cannot determine size of graphic"
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{bmpsize}
+
+\usepackage{apacite}
+
+\usepackage{lmodern}	% Schrift "Latin Modern"
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+%\pagestyle{empty}	% Auskommentieren, wenn Seitenzahlen gewünscht
+
+\newcommand{\LS}{Latex-Suite}
+\newcommand{\LSR}{\LS{} Reference}
+\newcommand{\vimhNP}[1]{\texttt{h: #1}}
+\newcommand{\vimh}[1]{(\vimhNP{#1})}
+
+% Angabe für den Titel
+\title{\LS{} -- die ultimative Anleitung}
+\author{Marco Strehler}
+\date{23.07.2014}
+
+\begin{document} 
+
+\maketitle
+
+\section{Einführung}
+
+In der Referenz zur \LS{} ist zwar alles vorhanden, aber vieles wird
+nur sehr knapp erwähnt und mit verschiedenen Problemen wird der User alleine
+gelassen.
+
+Diese Anleitung soll es dem Einsteiger in die \LS{} einfach machen und
+ist aus den Notizen entstanden, die ich mir -- zur Ergänzung zur Reference --
+selbst gemacht habe.
+
+Konventionen in diesem Dokument:
+
+\begin{itemize}
+  \item vim-Hilfe: immer wenn auf das Hilfe-System von vim hingewiesen wird
+    (aufgerufen aus dem Normal-Modus mit dem Befehl \vimhNP{help}, wobei
+    \texttt{help} hier das gesuchte Hilfethema ist). Wird genau diese Notation
+    gewählt: also z.B. \vimhNP{latex-suite} oder \vimhNP{tutorial}.
+  \item Die Einstellungen werden jeweils als kleines Listing dargestellt.
+\end{itemize}
+
+\section{Konfigurations-Dateien}
+
+Um die Sache nicht allzu einfach zu machen, muss man seine Konfigurationen in verschiedenen Dateien vornehmen.
+
+\begin{description}
+  \item[vimrc] Konfigurationsfile für vim \vimh{vimrc}.
+  \item[tex.vim] Konfigurationsfile für globale Variablen der \LS.
+    Pfad: \texttt{\textasciitilde/.vim/ftplugin/tex.vim}. \textbf{Datei existiert nicht, muss von Hand erzeugt werden.}
+  \item[tex\_macros.vim] Definitionen für Macros (IMAP).
+    Pfad: \texttt{\textasciitilde/.vim/after/ftplugin/tex\_macros.vim}. \textbf{Datei existiert nicht, muss von Hand erzeugt werden.}
+	\item[bib.vim] Konfiguraitonsfile für bib-Files.
+	  Pfad: \texttt{\textasciitilde/.vim/ftplugin/bib.vim}.
+\end{description}
+
+
+\section{Templates}
+
+\subsection{Templates einfügen}
+
+Siehe \vimhNP{latex-suite-templates}.
+
+Ein neues LaTeX-Dokument beginnt man am besten mit einem Dokument-Gerüst
+(Template). Das Vorgehen ist dabei folgendermassen:
+
+\begin{enumerate}
+  
+  \item In vim ein neues Dokument erstellen. Wichtig ist dabei die Endung
+    \texttt{.tex}, damit die \LS{} aktiviert wird.
+
+  \item mit \texttt{:TTemplate<CR>} eine Liste mit den vorhandenen
+    Vorlagen im oben erwähnten Template-Ordner anzeigen lassen. Mit der
+    Eingabe der entsprechenden Nummer und <CR> wird das Template an der
+    Cursorstelle eingefügt. Alternativ kann der Template-Namen gleich angegeben
+    werden. Also z.B. \texttt{:TTemplate meinTemplate}. Gut zu wissen: die
+    Auto-Vervollständigung mit der Tabulator-Taste funktioniert hier ebenfalls.
+    Mit \texttt{:TTe<Tab>} sowie \texttt{m<Tab>} bekommt man ebenfalls
+    \texttt{:TTemplate meinTemplate}.
+
+\end{enumerate}
+
+Bei mir funktioniert das Template-Menü in MacVim nicht korrekt. Genauer: die Nummern der Templates
+wird angezeigt, allerdings nicht der Template-Name, was das Menü praktisch unbrauchbar macht.
+Da ich aber sowieso der Meinung bin, dass vim möglichst über die Tastatur bedient werden soll,
+ist das ein verschmerzbarer Bug.
+
+\subsection{Templates anpassen, eigene Templates einfügen}
+
+Die LS-Referenz gibt an, dass die Templates im Verzeichnis \texttt{\$VIM/ftplugin/latex-suite/templates} zu finden sind.
+Das ist aber ein Verzeichnis, dass es so nicht gibt.
+Dabei ist \texttt{\$VIM} das Kürzel für das Benutzerverzeichnis, das auf unterschiedlichen Betriebssystemen unterschiedliche Pfade aufweist.
+
+Auf meinem Mac gelange ich aus dem Terminal mit dem Befehl
+
+\texttt{cd \textasciitilde/.vim/ftplugin/latex-suite/templates/}
+
+dorthin. Wobei das Zeichen \textasciitilde{} (Tilde), wiederum eine Abkürzung für das Userverzeichnis ist.
+Erzeugt wird es mit cmd-N.
+
+Die Referenz erwähnt weiter, dass Templates \emph{dynamic elements} enthalten können in der Form von Vim-Ausdrücken.
+Leider schweigt sich die Referenz darüber aus, wie das zu bewerkstelligen ist.
+Die vorhandenen Beispiele scheinen Befehle zwischen zwei \texttt{!comp!}-Ausdrücken zu platzieren.
+Siehe Listening \ref{report}.
+
+Weitere Informationen zu vim-Expressionen holt man sich mit der internen Hilfe mit den Befehlen
+\texttt{:h expression} oder
+\texttt{:h usr\_41.txt}.
+
+Das bereits vorhandene Beispiel im Ordner \texttt{templates}:
+
+\lstset{%
+	showtabs=false,
+      	numbers=left,
+	numberstyle=\tiny,
+	breaklines=true,
+      	breakautoindent=true,
+      	basicstyle=\small,
+	language=[LaTeX]TeX,
+      	keywordstyle=\bfseries,
+      	stringstyle=\ttfamily}
+
+\lstinputlisting[caption={Template report.tex},label=report]{/Users/marcostrehler/.vim/ftplugin/latex-suite/templates/report.tex}
+
+Wenn beim Templete Zeileneinzüge verwendet werden, dann kommt es zu einem hässlchen Treppeneffekt.
+
+\subsection{Hinweise zu eigenen Templates}
+
+Beim Erstellen von eigenen Templates stellen sich m.E. zwei grundsätzliche Fragen:
+\begin{itemize}
+  \item Wie viel soll ich in ein Template hineinpacken? Das meint, wie viele Strukturen sollen schon fertig für den
+    Gebrauch in so einer Vorlage vorhanden sein (z.B. schon einige Frame-Umgebungen bei der Beamer-Klasse).
+  \item Soll ich für eine Dokumentklasse verschiedene Templates mit verschiedenen Optionen als separate Dateien
+    abspeichern oder soll ein Template mit verschiedenen Optionen (zum Beispiel mit der Möglichkeit des Auskommentieren)
+    zur Verfügung gestellt werden?
+\end{itemize}
+
+Ich empfehle \emph{wenig} Strukturen (also kurze Dateien). Insbesondere weil für mich repetivie Codes in ein Makro gehören.
+
+Aus ähnlichen Gründen versuche ich möglichst, Optionen als Auskommentierte Alternativen zu gestalten.
+Das reduziert die vorhandenen, und zu pflegenden Templates.
+
+Also möglichst \emph{kurze} und \emph{wenig} Templates erzeugen.
+
+Am besten speichert man sich ein persönlicher Template-Header als Makro ab (Listing \ref{lst:makro}) und kann ihn so in schon vorhandene Templates bequem einfügen.
+In das Templates können dann noch die von der \LS{} unterstützten Platzhalter \texttt{<+Platzhalter+>} eingebaut werden.
+Mit Ctrl-J kann dann bequem von Platzhalter zu Platzhalter gesprungen und die wichtigsten Daten eingegeben werden.
+
+\begin{lstlisting}[float,caption={Template-Header, wie er als Makro verwendet werden kann.},label=lst:makro]
+<+	+>	!comp!	!exe!
+% Datei: !comp!expand("%")!comp!
+% Begonnen: !comp!strftime("%d.%m.%Y ")!comp!
+% Letzte Aenderung: !comp!strftime("%d.%m.%Y ")!comp!
+\end{lstlisting}
+
+In vim können alle Templates zur Bearbeitung mit dem Befehl
+
+\texttt{:arga ~/.vim/ftplugin/latex-suite/templates/*.tex}
+
+geöffnet und in die Argumenten-Liste geladen werden.
+So können alle (schon vorhandenenen Templates) an die \LS{} angepasst werden.
+Dabei hilft ein Template-Header, der in ein Makro gepackt wird (Listing \ref{lst:makro}).
+
+Siehe dazu auch \texttt{:h vim-arguments}.
+
+Noch offen: Unterschiede vim, gvim? Wieso werden in MacVim die Menüs nicht angezeigt? Namenskonvention?
+
+\section{Makros}
+
+\subsection{Spezielles Mapping IMAP}
+Die LS kommt mit einer speziellen Mapping-Technik, die sich vom normalen Mapping im Einfüge-Modus unterscheidet.
+Grundsätzliches dazu findet sich mit \texttt{:h map-overviw} oder im File \texttt{\textasciitilde/.vim/plugin/imaps.vim}. 
+
+\subsection{Platzhalter}
+
+Die Makros der LS benutzen ein geniales Platzhalter-System. Die Platzhalter sind dort, wo bei einem eingefügten Makro das
+nächste, relevante Text eingefügt werden muss. Der Platzhalter besteht aus \texttt{<+} als <<öffnende>> Klammer und
+\texttt{+>} als <<schliessende>> Klammer. Dazwischen kann eine kurzer Memotext stehen, der dem Platzhalter noch einen
+Sinn gibt (\texttt{<+Titel+>}). Mit der Tastenkombination \texttt{Ctrl-J} kann dann vorwärts von Platzhalter zu
+Platzhalter gehüpft werden. Mit einem aktivierten Platzhalter ist man im Select-Modus (\texttt{:h select-mode}).
+
+Im Select-Modus kann gleich des gewünschte eigetippt werden. Der Select-Modus
+kommt einem als Mac- oder Windows-User am bekanntesten vor: anlog zur Auswahl, die mit dem nächsten Tastendruck
+<<überschrieben>> wird.
+
+Eine geniale Einrichtung, die einem unheimlich viel Bewegungsbefehle spart.
+
+\subsection{Makros ein- und ausschalten}
+
+Über die Variable \texttt{Imap\_FreezeImap} lässt sich die Makro-Funktion ein- und ausschalten.
+
+\begin{itemize}
+  \item \texttt{:let b:Imap\_FreezeImap=1} schaltet die Makros im aktuellen Buffer aus
+  \item \texttt{:let b:Imap\_FreezeImap=0} schaltet die Makros im aktuellen Buffer ein
+  \item \texttt{:let b:Imap\_FreezeImap} zeigt den aktuellen Status an. Allerdings erst, wenn die Variable
+    erstmalig initialisiert (d.h. auf 0 oder 1 gesetzt) wurde. Ansonsten erfolgt eine Fehlermeldung
+    (E121: Undefined variable: b:Imap\_FreezeImap).
+\end{itemize}
+
+Mit \texttt{g:Imap\_FreezeImap} können die Makros systemweit ein- und ausgeschaltet werden.
+
+
+\subsection{Makros für LaTeX-Umgebung}
+
+\subsubsection{Umgebung oder Paket einfügen mit F5}
+\label{sec:methodpressingffife}
+
+Die Taste \texttt{F5} -- gedrückt im Einfüge- oder Normal-Modus
+-- hat abängig davon, ob sie auf einer leeren oder mit einem
+Umgebungs-Schlüsselwort versehen Zeile gedrückt wird unterschiedliche
+Auswirkung. Des weiteren spiel es eine Rolle ob man sich in der Preambel oder
+im Dokumentteil des LaTeX-File befindet.
+
+Mit dem Cursor auf einer \emph{leeren} Zeile wird mit \texttt{F5} eine Liste mit
+Schlüsselwörter angezeigt. Diese stellen entweder Paketnamen (in der
+Präambel) oder LaTeX-Umgebungen (im Dokumentteil) dar. Die entsprechende
+Nummer wird gewählt und mit \texttt{<CR>} quittiert. Der entsprechende Code
+wird eingefügt.
+
+Enthält die Zeile bereits ein Schlüsselwort wird dieses als Paketname oder
+als Umgebungsname verwendet und mit dem entsprechende LaTeX-Code ergänzt
+(Tabelle \ref{tab:tasteffuenf}).
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|ll}
+    \hline
+    		& in Präambel & im Dokumentteil \\
+	\hline
+	leere Zeile & Auswahl Paket & Auswahl Umgebung\\
+	Schlüsselwort & verwende \texttt{usepackage} & verwende \texttt{begin \dots end}\\
+	Visual-Mode & nichts & schliesst ausgewählter Text in die Umgebung ein\\
+	Line Visual-Mode & nichts & schliesst ausgewählten Text in die Umgebung ein (zeilenweise) \\
+  \hline
+      \end{tabular}
+  \caption{Funktion der Taste F5, abhängig von der Position der Eingabe}
+  \label{tab:tasteffuenf}
+\end{table}
+
+\subsubsection{Umgebung einfügen mit <<Hotkeys>> Shift-F1 bis Shift-F4}
+
+Mit den Tastenkombinationen Shift-F1 bis Shift-F4 können die wichtigsten Umgebungen
+abgespeichert werden.
+
+Das geschieht in der Datei \texttt{tex.vim} mit der Variablen \texttt{g:Tex\_HotKeyMappings}.
+Ein Beispiel findet sich im Listing \ref{lst:hotkey}.
+
+\begin{lstlisting}[float,caption={Beispiel für Variable \texttt{g:Tex\_HotKeyMappings} in der Datei \texttt{tex.vim} },label=lst:hotkey]
+" Nur die ersten 4 Umgebungen werden verwendet
+" Shift-F1 bis Shift-F4
+let g:Tex_HotKeyMappings = 'itemize,enumerate,frame,verbatim'
+\end{lstlisting}
+
+Im Gegensatz zum Einfügen einer Umgebung mit der F5-Taste funktionieren die Hotkeys nur im Einfüge-Modus.
+
+\subsubsection{Drei-Buchstaben-Kürzel}
+
+Umgebungen können im Einfüge-Modus mit einem Drei-Buchstaben-Kürzel eingesetzt werden.
+Diese sind in Grossbuchstaben und beginnen mit \texttt{E}, gefolgt von zwei weiteren Grossbuchstaben
+die 
+
+\begin{itemize}
+  \item bei Umgebungsbezeichnungen, die aus zwei Wörtern bestehen, jeweils die Anfangsbuchstaben darstellen
+    (\texttt{\textbf{f}lush\textbf{l}eft} wird zu E\textbf{FL}).
+  \item bei Umgebungsbezeichnungen, die aus einem Wort bestehen, den ersten und zweiten Buchstaben darstellen
+    (\texttt{equation} wird zu EEQ).
+  \item bei Konflikten wird nicht der zweite Buchstabe, sondern der \emph{letzte} Buchstabe genommen
+    (\texttt{quote} wird zu EQE, \texttt{quotation} wird zu EQN).
+\end{itemize}
+
+\subsubsection{Umgebungen einsetzen im Visual-Modus: mit F5}
+
+%siehe 3.1.2. Enclosing in Environments.
+Die \LS bietet die Möglichkeit, ein im Visual-Modus ausgewählten Text automatisch in eine LaTeX-Umgebung zu fassen.
+Die angezeigte Liste kann mit der Variable \texttt{g:Tex\_PromptedEnvironments} angepasst werden.
+
+\subsubsection{Umgebung einsetzen im Visual-Modus mit Drei-Buchstaben-Kürzel}
+
+Der Text kann auch ausgewählt werden und einem Drei-Buchstaben-Kürzel ausgewählt werden.
+Die drei Buchstaben bestehen aus , (Komma) und den oben beschriebener Abkürzung, aber in \emph{Kleinbuchstaben}.
+
+Aus \texttt{ETT} wird im Visual-Mode also \texttt{,tt}.
+Danach ist man im Normal-Modus.
+
+\subsubsection{Umgebung wechseln mit Shift-F5}
+
+Wird im Normal-Modus die Shift-F5 gedrückt, kontrolliert \LS, in welcher Umgebung der Cursor aktuell ist.
+Es kann so die Umgebung gewechselt werden.
+Bei geschachtelten Umgebungen wird die innerste ersetzt.
+Mit u kommt man wieder in die alte Umgebung.
+
+Die mit Shift-F5 angezeigten, voreingestellten Umgebungen verändert werden
+können wird im Abschnitt \ref{sec:methodpressingffife} dargestellt.
+
+Bug? Bei mir wird bei Anwendung von Shift-F5 jeweils korrekterweise die innerste Umgebung ersetzt.
+Allerdings werden die Backlash-Zeichen vor begin und end verdoppelt.
+
+\subsubsection{Makros für LaTeX-Befehle anpassen}
+\label{sec:commandmappings}
+
+Die Variable \texttt{g:Tex\_PromptedEnvironments} bestimmt, welche Umgebungen mit \texttt{F5}
+angezeigt wird.
+Beispiel siehe Listing \ref{lst:environments}.
+
+% "Blutte" Sonderzeichen in einer lstlisting-Umgebung gibt Fehlermeldung?
+% können -> koennen im untenstehenden Beispiel.
+\begin{lstlisting}[float,caption={Beispiel für Variable \texttt{g:Tex\_PromptedEnvironments} in der Datei \texttt{tex.vim} },label=lst:environments]
+" Beliebig viele LaTeX-Umgebungen koennen angegeben werden.
+let g:Tex_PromptedEnvironments = 'frame,center,lstlisting,itemize'
+\end{lstlisting}
+
+\section{Diverse Probleme}
+
+\subsection{Folding ein- und ausschalten}
+
+Siehe: http://stackoverflow.com/questions/3322453/how-can-i-disable-code-folding-in-vim-with-vim-latex
+
+\subsection{Viewer in MacVim}
+
+\subsubsection{Skim}
+
+\subsubsection{Preview}
+
+\subsubsection{PDF Reader (Acrobat}
+
+
+http://www.iskysoft.de/edit-pdf/pdf-reader-for-mac.html
+
+
+% http://stackoverflow.com/questions/12650528/viewing-pdfs-with-vim-latex-suite-start-preview-shell-returned-127
+% https://groups.google.com/forum/#!topic/vim_mac/IO7oJCVxkQY
+% http://reference-man.blogspot.co.uk/2011/09/fully-integrated-latex-in-macvim.html 
+% \bibliographystyle{apacite}
+% \bibliography{<++>}
+
+
+\end{document}
+
